@@ -2,8 +2,8 @@
 
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
 import toast from "react-hot-toast";
+import React, { useState } from "react";
 
 type userInfo = {
   username: string;
@@ -31,7 +31,7 @@ const SignUp = () => {
     try {
       const response = await axios.post("api/users/signup", userInfo);
       console.log(response);
-      // router.push("/login");
+      router.push("/login");
     } catch (error: any) {
       toast.error(error.message);
     } finally {

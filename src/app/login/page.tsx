@@ -1,6 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 type userInfo = {
   email: string;
@@ -12,12 +15,25 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const handleLogin = (
+  const handleLogin = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    console.log(loginInfo);
+    setLoading(true);
+    // console.log(userInfo);
+    try {
+      const response = await axios.post("api/users/login", loginInfo);
+      console.log(response);
+      router.push("/home");
+    } catch (error: any) {
+      toast.error(error.message);
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -58,8 +74,9 @@ const LoginPage = () => {
         <button
           className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg uppercase"
           onClick={handleLogin}
+          disabled={loading}
         >
-          Login
+          {loading ? "Logging in..." : "Login"}
         </button>
       </div>
     </div>
