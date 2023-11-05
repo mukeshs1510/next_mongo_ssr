@@ -1,6 +1,9 @@
 "use client";
 
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 
 type userInfo = {
   username: string;
@@ -10,18 +13,30 @@ type userInfo = {
 };
 
 const SignUp = () => {
-  const [loginInfo, setLoginInfo] = useState<userInfo>({
+  const [buttonDisable, setButtonDisable] = useState(false);
+  const [userInfo, setUserInfo] = useState<userInfo>({
     username: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const router = useRouter();
 
-  const handleLogin = (
+  const handleSignup = async (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
     event.preventDefault();
-    console.log(loginInfo);
+    setButtonDisable(true);
+    // console.log(userInfo);
+    try {
+      const response = await axios.post("api/users/signup", userInfo);
+      console.log(response);
+      // router.push("/login");
+    } catch (error: any) {
+      toast.error(error.message);
+    } finally {
+      setButtonDisable(false);
+    }
   };
 
   return (
@@ -34,10 +49,10 @@ const SignUp = () => {
           <input
             type="text"
             name="username"
-            value={loginInfo.username}
+            value={userInfo.username}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setLoginInfo({
-                ...loginInfo,
+              setUserInfo({
+                ...userInfo,
                 username: event.target.value,
               });
             }}
@@ -51,10 +66,10 @@ const SignUp = () => {
           <input
             type="email"
             name="email"
-            value={loginInfo.email}
+            value={userInfo.email}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setLoginInfo({
-                ...loginInfo,
+              setUserInfo({
+                ...userInfo,
                 email: event.target.value,
               });
             }}
@@ -68,10 +83,10 @@ const SignUp = () => {
           <input
             type="password"
             name="password"
-            value={loginInfo.password}
+            value={userInfo.password}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setLoginInfo({
-                ...loginInfo,
+              setUserInfo({
+                ...userInfo,
                 password: event.target.value,
               });
             }}
@@ -88,10 +103,10 @@ const SignUp = () => {
           <input
             type="password"
             name="confirmPassword"
-            value={loginInfo.confirmPassword}
+            value={userInfo.confirmPassword}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-              setLoginInfo({
-                ...loginInfo,
+              setUserInfo({
+                ...userInfo,
                 confirmPassword: event.target.value,
               });
             }}
@@ -100,9 +115,10 @@ const SignUp = () => {
         </div>
         <button
           className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg uppercase"
-          onClick={handleLogin}
+          onClick={handleSignup}
+          disabled={buttonDisable}
         >
-          Register
+          {buttonDisable ? "Processing..." : "Register"}
         </button>
       </div>
     </div>
